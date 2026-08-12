@@ -194,6 +194,11 @@ color:#fff;font:9px "Courier New",monospace;letter-spacing:.15em;text-transform:
     background-position:50% center;
 }
 
+    .panel.clone .photo{
+    background-image:url("foto1.jpg");
+    background-position:50% center;
+}
+
   .panelText{
     left:24px;
     bottom:60px;
@@ -445,14 +450,14 @@ function startMobileSlider(){
     /* jsme na klonu prvního panelu */
     if(mobileSlide === originalPanels.length){
 
-      setTimeout(()=>{
+  setTimeout(()=>{
 
-        /* neviditelně skočíme na skutečný první panel */
-        mobileSlide = 0;
-        goToMobileSlide(0, false);
+    /* neviditelně skočíme na skutečný první panel */
+    mobileSlide = 0;
+    goToMobileSlide(0, false);
 
-      },700);
-    }
+  },500);
+}
 
   },3000);
 }
