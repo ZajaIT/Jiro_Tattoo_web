@@ -33,7 +33,6 @@ body{font-family:"Courier New",monospace;color:var(--white);overflow:hidden}
 background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.18) 0 1px,transparent 1px 4px)}
 .noise.off{display:none}
 
-/* scan line runs ONCE only during boot */
 .scan{position:absolute;z-index:61;left:0;right:0;height:2px;top:-4px;pointer-events:none;
 background:rgba(255,255,255,.55);box-shadow:0 0 14px rgba(255,255,255,.32);
 animation:scanOnce 1.55s linear 1 forwards}
@@ -74,7 +73,6 @@ font:10px "Courier New",monospace;letter-spacing:.2em;text-transform:uppercase;c
     pointer-events:none;
 }
 
-/* ---------- CLEAN THREE-PANEL HERO ---------- */
 .home{position:absolute;inset:0;z-index:10;background:#050505;opacity:0;visibility:hidden;transition:opacity .55s ease}
 .home.show{opacity:1;visibility:visible}
 .topbar{position:absolute;z-index:12;left:0;right:0;top:0;height:76px;display:flex;align-items:center;justify-content:flex-end;
@@ -122,7 +120,6 @@ opacity:0;transform:translateY(8px);transition:.35s .12s}
 color:#fff;font:9px "Courier New",monospace;letter-spacing:.15em;text-transform:uppercase;padding:9px 11px;cursor:pointer;opacity:.55}
 .restart:hover{opacity:1}
 
-/* mobile: same idea, horizontal strips */
 @media(max-width:760px){
 
   .topbar{
@@ -169,7 +166,6 @@ color:#fff;font:9px "Courier New",monospace;letter-spacing:.15em;text-transform:
     border-bottom:0;
   }
 
-  /* na mobilu žádné desktopové hover efekty */
   .panels:has(.panel:hover) .panel:not(:hover) .photo{
     filter:none;
   }
@@ -182,9 +178,6 @@ color:#fff;font:9px "Courier New",monospace;letter-spacing:.15em;text-transform:
     background-position:50% center;
 }
 
-/* Nekonečný mobilní slider fyzicky vytvoří:
-   KLON 3 | 1 | 2 | 3 | KLON 1
-   Proto explicitně přiřadíme obrázek všem pěti pozicím. */
 .panel:nth-child(1) .photo{
     background-image:url("foto3.jpg") !important;
 }
@@ -403,10 +396,6 @@ document.querySelectorAll('.panel').forEach(panel=>{
  });
 });
 
-/* ===================================
-   MOBILE INFINITE SLIDER + SWIPE
-=================================== */
-
 const panelsContainer = document.querySelector('.panels');
 const originalPanels = [...document.querySelectorAll('.panel')];
 
@@ -415,10 +404,6 @@ let mobileSliderTimer = null;
 let mobileLoopReady = false;
 let mobileScrollTimer = null;
 
-
-/* vytvoříme:
-   KLON 3 | 1 | 2 | 3 | KLON 1
-*/
 function prepareMobileLoop(){
 
   if(window.innerWidth > 760 || mobileLoopReady) return;
@@ -434,13 +419,10 @@ function prepareMobileLoop(){
 
   mobileLoopReady = true;
 
-  /* skutečná první fotka je teď na pozici 1 */
   mobileSlide = 1;
   panelsContainer.scrollLeft = panelsContainer.clientWidth;
 }
 
-
-/* plynulý přejezd na další fotku */
 function goToMobileSlide(index){
 
   mobileSlide = index;
@@ -450,9 +432,7 @@ function goToMobileSlide(index){
     behavior:'smooth'
   });
 }
-
-
-/* okamžitý NEVIDITELNÝ přesun mezi klony */
+    
 function jumpToMobileSlide(index){
 
   mobileSlide = index;
@@ -469,8 +449,6 @@ function jumpToMobileSlide(index){
   panelsContainer.style.scrollSnapType = snap;
 }
 
-
-/* automatický slider */
 function startMobileSlider(){
 
   if(window.innerWidth > 760) return;
@@ -491,8 +469,6 @@ function stopMobileSlider(){
   clearInterval(mobileSliderTimer);
 }
 
-
-/* při ručním swipu zastavíme automatiku */
 panelsContainer.addEventListener('touchstart',()=>{
 
   if(window.innerWidth <= 760){
@@ -501,8 +477,6 @@ panelsContainer.addEventListener('touchstart',()=>{
 
 },{passive:true});
 
-
-/* zjistíme, kde slider po přejezdu skončil */
 panelsContainer.addEventListener('scroll',()=>{
 
   if(window.innerWidth > 760 || !mobileLoopReady) return;
@@ -517,20 +491,12 @@ panelsContainer.addEventListener('scroll',()=>{
       panelsContainer.scrollLeft / width
     );
 
-
-    /* KLON 1 za trojkou
-       přehodíme neviditelně na skutečnou 1
-    */
     if(mobileSlide === 4){
 
       jumpToMobileSlide(1);
 
     }
 
-
-    /* KLON 3 před jedničkou
-       přehodíme neviditelně na skutečnou 3
-    */
     else if(mobileSlide === 0){
 
       jumpToMobileSlide(3);
@@ -541,7 +507,6 @@ panelsContainer.addEventListener('scroll',()=>{
 });
 
 
-/* po skončení intra spustíme slider */
 const originalFinish = finish;
 
 finish = function(){
