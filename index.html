@@ -180,25 +180,35 @@ color:#fff;font:9px "Courier New",monospace;letter-spacing:.15em;text-transform:
     background-position:50% center;
 }
 
+/* Nekonečný mobilní slider fyzicky vytvoří:
+   KLON 3 | 1 | 2 | 3 | KLON 1
+   Proto explicitně přiřadíme obrázek všem pěti pozicím. */
+.panel:nth-child(1) .photo{
+    background-image:url("foto3.jpg") !important;
+}
+
+.panel:nth-child(2) .photo{
+    background-image:url("foto1.jpg") !important;
+}
+
+.panel:nth-child(3) .photo{
+    background-image:url("foto2.jpg") !important;
+}
+
+.panel:nth-child(4) .photo{
+    background-image:url("foto3.jpg") !important;
+}
+
+.panel:nth-child(5) .photo{
+    background-image:url("foto1.jpg") !important;
+}
+
 .clone-last .photo{
     background-image:url("foto3.jpg") !important;
 }
 
 .clone-first .photo{
     background-image:url("foto1.jpg") !important;
-}
-
-/* po vložení klonu před první panel */
-.panel:nth-child(2) .photo{
-    background-image:url("foto1.jpg");
-}
-
-.panel:nth-child(3) .photo{
-    background-image:url("foto2.jpg");
-}
-
-.panel:nth-child(4) .photo{
-    background-image:url("foto3.jpg");
 }
 
   .panelText{
