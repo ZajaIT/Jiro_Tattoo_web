@@ -390,13 +390,34 @@ document.querySelectorAll('.panel').forEach(panel=>{
    MOBILE AUTO SLIDER + SWIPE
 =================================== */
 
+/* ===================================
+   MOBILE INFINITE SLIDER + SWIPE
+=================================== */
+
 const panelsContainer = document.querySelector('.panels');
-const panels = document.querySelectorAll('.panel');
+const originalPanels = [...document.querySelectorAll('.panel')];
 
 let mobileSlide = 0;
 let mobileSliderTimer = null;
+let mobileLoopReady = false;
 
-function goToMobileSlide(index){
+
+/* vytvoření kopie prvního panelu za posledním */
+function prepareMobileLoop(){
+
+  if(window.innerWidth > 760 || mobileLoopReady) return;
+
+  const firstClone = originalPanels[0].cloneNode(true);
+  firstClone.classList.add('clone');
+
+  panelsContainer.appendChild(firstClone);
+
+  mobileLoopReady = true;
+}
+
+
+/* přesun na konkrétní slide */
+function goToMobileSlide(index, smooth = true){
 
   if(window.innerWidth > 760) return;
 
@@ -404,13 +425,17 @@ function goToMobileSlide(index){
 
   panelsContainer.scrollTo({
     left: panelsContainer.clientWidth * mobileSlide,
-    behavior: 'smooth'
+    behavior: smooth ? 'smooth' : 'auto'
   });
 }
 
+
+/* automatické přepínání */
 function startMobileSlider(){
 
   if(window.innerWidth > 760) return;
+
+  prepareMobileLoop();
 
   clearInterval(mobileSliderTimer);
 
@@ -418,28 +443,36 @@ function startMobileSlider(){
 
     mobileSlide++;
 
-    if(mobileSlide >= panels.length){
-      mobileSlide = 0;
-    }
-
     goToMobileSlide(mobileSlide);
+
+    /* jsme na klonu prvního panelu */
+    if(mobileSlide === originalPanels.length){
+
+      setTimeout(()=>{
+
+        /* neviditelně skočíme na skutečný první panel */
+        mobileSlide = 0;
+        goToMobileSlide(0, false);
+
+      },700);
+    }
 
   },3000);
 }
+
 
 function stopMobileSlider(){
   clearInterval(mobileSliderTimer);
 }
 
 
-/* když uživatel sáhne na slider,
-   automatika se zastaví */
+/* uživatel začne swipovat = stop automatiky */
 panelsContainer.addEventListener('touchstart',()=>{
   stopMobileSlider();
 },{passive:true});
 
 
-/* zjistíme, kam uživatel swipnul */
+/* hlídání aktuální pozice při ručním swipe */
 panelsContainer.addEventListener('scroll',()=>{
 
   if(window.innerWidth > 760) return;
@@ -451,7 +484,7 @@ panelsContainer.addEventListener('scroll',()=>{
 });
 
 
-/* po skončení intra spustíme automatiku */
+/* po skončení intra spustit carousel */
 const originalFinish = finish;
 
 finish = function(){
@@ -459,9 +492,11 @@ finish = function(){
   originalFinish();
 
   if(window.innerWidth <= 760){
+
+    prepareMobileLoop();
+
     setTimeout(startMobileSlider,500);
   }
-
 };
 
 play();
