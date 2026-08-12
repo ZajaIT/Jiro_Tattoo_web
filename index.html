@@ -178,8 +178,11 @@ color:#fff;font:9px "Courier New",monospace;letter-spacing:.15em;text-transform:
   }
 
   .photo{
+    background-size:contain;
     background-position:center;
-  }
+    background-repeat:no-repeat;
+    background-color:#050505;
+}
 
   /* každou fotku můžeme doladit zvlášť */
   .panel:nth-child(1) .photo{
@@ -421,7 +424,7 @@ function startMobileSlider(){
 
     goToMobileSlide(mobileSlide);
 
-  },4500);
+  },3000);
 }
 
 function stopMobileSlider(){
@@ -456,7 +459,7 @@ finish = function(){
   originalFinish();
 
   if(window.innerWidth <= 760){
-    setTimeout(startMobileSlider,1200);
+    setTimeout(startMobileSlider,500);
   }
 
 };
