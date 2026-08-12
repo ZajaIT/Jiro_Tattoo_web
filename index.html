@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ERROR 03 — Hero concept</title>
+<style>
+:root{--black:#050505;--white:#f4f1ea}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;background:var(--black)}
+body{font-family:"Courier New",monospace;color:var(--white);overflow:hidden}
+.stage{position:relative;width:100vw;height:100dvh;background:var(--black);overflow:hidden}
+
+/* ---------- INTRO ---------- */
+.boot{position:absolute;inset:0;z-index:30;background:#050505;display:grid;place-items:center}
+.bootbox{width:min(760px,86vw)}
+.bootline{font-size:clamp(12px,1.4vw,18px);letter-spacing:.08em;line-height:1.9;opacity:0}
+.bootline.show{animation:appear .12s forwards}
+
+.err{
+    font-family:Arial,sans-serif;
+    font-size:clamp(52px,11vw,150px);
+    line-height:.82;
+    letter-spacing:-.08em;
+    font-weight:bold;
+    margin:14px 0;
+}
+.cursor{display:inline-block;width:.7em;height:1em;background:currentColor;vertical-align:-.12em;animation:blink .7s steps(1) infinite}
+@keyframes appear{to{opacity:1}}
+@keyframes blink{50%{opacity:0}}
+
+.noise{position:absolute;inset:0;z-index:60;pointer-events:none;opacity:.075;
+background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.18) 0 1px,transparent 1px 4px)}
+.noise.off{display:none}
+
+/* scan line runs ONCE only during boot */
+.scan{position:absolute;z-index:61;left:0;right:0;height:2px;top:-4px;pointer-events:none;
+background:rgba(255,255,255,.55);box-shadow:0 0 14px rgba(255,255,255,.32);
+animation:scanOnce 1.55s linear 1 forwards}
+.scan.off{display:none}
+@keyframes scanOnce{from{top:-4px}to{top:101%}}
+
+.flash{position:absolute;inset:0;z-index:20;opacity:0;background-size:cover;background-position:center;
+filter:grayscale(.35) contrast(1.15) brightness(.72)}
+.flash.on{animation:flash .58s ease both}
+@keyframes flash{
+0%{opacity:0;transform:scale(1.04) translateX(-10px)}
+15%{opacity:1}
+28%{transform:scale(1.01) translateX(8px)}
+65%{opacity:.95}
+100%{opacity:0;transform:scale(1)}
+}
+.slice{position:absolute;left:0;width:100%;background-size:100vw 100dvh;background-repeat:no-repeat;opacity:0;z-index:22}
+.slice.on{animation:slice .55s cubic-bezier(.2,.8,.2,1) both}
+@keyframes slice{
+0%{opacity:0;transform:translateX(-7vw)}
+18%{opacity:1}
+65%{opacity:.95;transform:translateX(2vw)}
+100%{opacity:0;transform:none}
+}
+.chapter{position:absolute;z-index:24;left:clamp(20px,5vw,72px);bottom:clamp(45px,8vh,92px);opacity:0;pointer-events:none}
+.chapter.on{animation:chapter .7s ease both}
+.chapter small{display:block;font-size:11px;letter-spacing:.28em;margin-bottom:10px}
+.chapter strong{display:block;font-family:Arial,Helvetica,sans-serif;font-size:clamp(48px,9vw,140px);line-height:.82;letter-spacing:-.065em;text-transform:uppercase}
+@keyframes chapter{0%{opacity:0;transform:translateY(12px)}20%,75%{opacity:1;transform:none}100%{opacity:0}}
+
+.skip{position:absolute;z-index:80;right:26px;bottom:24px;border:0;background:transparent;color:#fff;
+font:10px "Courier New",monospace;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;opacity:.6;padding:10px}
+.skip:hover{opacity:1}
+
+.flash,
+.slice,
+.chapter{
+    pointer-events:none;
+}
+
+/* ---------- CLEAN THREE-PANEL HERO ---------- */
+.home{position:absolute;inset:0;z-index:10;background:#050505;opacity:0;visibility:hidden;transition:opacity .55s ease}
+.home.show{opacity:1;visibility:visible}
+.topbar{position:absolute;z-index:12;left:0;right:0;top:0;height:76px;display:flex;align-items:center;justify-content:flex-end;
+padding:0 clamp(20px,4vw,58px);background:linear-gradient(to bottom,rgba(0,0,0,.72),transparent);pointer-events:none}
+.logo{font-size:11px;letter-spacing:.28em;text-transform:uppercase}
+.menu{display:flex;gap:26px;font-size:10px;letter-spacing:.16em;text-transform:uppercase}
+
+.panels{
+    display:flex;
+    width:100%;
+    height:100%;
+}
+
+.panel{
+    position:relative;
+    flex:1 1 0;
+    min-width:0;
+    overflow:hidden;
+    cursor:pointer;
+    border-right:1px solid rgba(255,255,255,.16);
+}
+
+.panel:last-child{
+    border-right:0;
+}
+
+.photo{position:absolute;inset:0;background-size:cover;background-position:center;transform:scale(1.02);
+transition:transform .9s cubic-bezier(.2,.72,.18,1),filter .6s ease}
+.panel:nth-child(1) .photo{background-image:url("foto1.jpg")}
+.panel:nth-child(2) .photo{background-image:url("foto2.jpg")}
+.panel:nth-child(3) .photo{background-image:url("foto3.jpg")}
+.panel::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.68),rgba(0,0,0,.04) 60%,rgba(0,0,0,.22));
+transition:background .5s}
+.panels:has(.panel:hover) .panel:not(:hover) .photo{filter:brightness(.45) grayscale(.35)}
+.panel:hover .photo{transform:scale(1.055)}
+.panelText{position:absolute;z-index:4;left:clamp(18px,2.5vw,42px);bottom:clamp(38px,7vh,76px);white-space:nowrap}
+.number{display:block;font-size:10px;letter-spacing:.24em;margin-bottom:10px;opacity:.7}
+.panelText h2{font-family:Arial,Helvetica,sans-serif;font-size:clamp(34px,4.8vw,76px);line-height:.86;letter-spacing:-.055em;text-transform:uppercase}
+.enter{display:flex;align-items:center;gap:12px;margin-top:17px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+opacity:0;transform:translateY(8px);transition:.35s .12s}
+.enter::after{content:"";width:44px;height:1px;background:currentColor}
+.panel:hover .enter{opacity:1;transform:none}
+
+.restart{position:absolute;z-index:15;right:24px;bottom:18px;border:1px solid rgba(255,255,255,.35);background:rgba(0,0,0,.24);
+color:#fff;font:9px "Courier New",monospace;letter-spacing:.15em;text-transform:uppercase;padding:9px 11px;cursor:pointer;opacity:.55}
+.restart:hover{opacity:1}
+
+/* mobile: same idea, horizontal strips */
+@media(max-width:760px){
+ .topbar{height:62px}
+ .menu{display:none}
+ .panels{flex-direction:column}
+ .panel{flex:1 1 33.333%;border-right:0;border-bottom:1px solid rgba(255,255,255,.16)}
+ .panel:last-child{border-bottom:0}
+ .panel:hover{flex:1 1 33.333%}
+ .panels:has(.panel:hover) .panel:not(:hover){flex:1 1 33.333%}
+ .photo{background-position:center}
+ .panelText{left:20px;bottom:20px}
+ .panelText h2{font-size:clamp(34px,11vw,56px)}
+ .enter{display:none}
+ .chapter strong{font-size:clamp(48px,17vw,82px)}
+ .restart{display:none}
+}
+</style>
+</head>
+<body>
+<main class="stage">
+
+  <section class="home" id="home">
+    <div class="topbar">
+      <div class="menu">
+  <span>Domů</span>
+  <span>O mně</span>
+  <span>Foto</span>
+  <span>Tetování</span>
+  <span>Obrazy</span>
+  <span>Kontakt</span>
+</div>
+    </div>
+
+    <div class="panels">
+      <div class="panel" data-target="#fotografie">
+        <div class="photo"></div>
+        <div class="panelText">
+          <span class="number">01 / TATTOO</span>
+          <h2>Tetování</h2>
+          <div class="enter">Prohlédnout</div>
+        </div>
+      </div>
+
+      <div class="panel" data-target="#tetovani">
+        <div class="photo"></div>
+        <div class="panelText">
+          <span class="number">02 / Protography</span>
+          <h2>Foto</h2>
+          <div class="enter">Prohlédnout</div>
+        </div>
+      </div>
+
+      <div class="panel" data-target="#obrazy">
+        <div class="photo"></div>
+        <div class="panelText">
+          <span class="number">03 / ART</span>
+          <h2>Obrazy</h2>
+          <div class="enter">Prohlédnout</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="restart" id="restart" type="button">Přehrát intro</button>
+  </section>
+
+  <div class="flash" id="flash"></div>
+  <div class="slice" id="s1"></div><div class="slice" id="s2"></div><div class="slice" id="s3"></div>
+
+  <div class="chapter" id="chapter">
+    <small id="chapterNo">01 / SIGNAL FOUND</small>
+    <strong id="chapterTitle">Photo</strong>
+  </div>
+
+  <section class="boot" id="boot">
+    <div class="bootbox">
+      <div class="bootline" id="b1">INITIALIZING VISUAL IDENTITY...</div>
+      <div class="bootline" id="b2">SEARCHING FOR AUTHOR / <span class="cursor"></span></div>
+      <div class="bootline" id="b3"><div class="err">ERROR 03</div></div>
+      <div class="bootline" id="b4">IDENTITY SPLIT INTO 3</div>
+      <div class="bootline" id="b5">RECONSTRUCTING...</div>
+    </div>
+  </section>
+
+  <div class="noise" id="noise"></div>
+  <div class="scan" id="scan"></div>
+  <button class="skip" id="skip" type="button">SKIP →</button>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const boot=$('boot'), home=$('home'), flash=$('flash'), chapter=$('chapter');
+const noise=$('noise'), scan=$('scan'), skip=$('skip'), restart=$('restart');
+const slices=[$('s1'),$('s2'),$('s3')];
+let timers=[];
+
+const scenes=[
+ {img:'foto1.jpg',no:'01 / SIGNAL FOUND',title:'PHOTO'},
+ {img:'foto2.jpg',no:'02 / SIGNAL FOUND',title:'TATTOO'},
+ {img:'foto3.jpg',no:'03 / SIGNAL FOUND',title:'ART'}
+];
+
+function later(fn,ms){const t=setTimeout(fn,ms);timers.push(t)}
+function resetAnim(el,cls){el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls)}
+
+function glitchScene(scene){
+ flash.style.backgroundImage=`url("${scene.img}")`;
+ resetAnim(flash,'on');
+ $('chapterNo').textContent=scene.no;
+ $('chapterTitle').textContent=scene.title;
+ resetAnim(chapter,'on');
+
+ const bands=[[0,28],[34,65],[72,100]];
+ slices.forEach((s,i)=>{
+   s.style.top=bands[i][0]+'%';
+   s.style.height=(bands[i][1]-bands[i][0])+'%';
+   s.style.backgroundImage=`url("${scene.img}")`;
+   s.style.backgroundPosition=`center ${bands[i][0]}%`;
+   resetAnim(s,'on');
+ });
+}
+
+function finish(){
+ timers.forEach(clearTimeout); timers=[];
+ boot.style.display='none';
+ flash.classList.remove('on'); chapter.classList.remove('on');
+ slices.forEach(s=>s.classList.remove('on'));
+ noise.classList.add('off');
+ scan.classList.add('off');
+ skip.style.display='none';
+ home.classList.add('show');
+}
+
+function play(){
+ timers.forEach(clearTimeout); timers=[];
+ home.classList.remove('show');
+ [1,2,3,4,5].forEach(n=>$('b'+n).classList.remove('show'));
+ boot.style.display='grid';
+ noise.classList.remove('off');
+ scan.classList.remove('off');
+ scan.style.animation='none'; void scan.offsetWidth; scan.style.animation='scanOnce 1.55s linear 1 forwards';
+ skip.style.display='block';
+
+later(()=>$('b1').classList.add('show'),150);
+later(()=>$('b2').classList.add('show'),550);
+later(()=>$('b3').classList.add('show'),1000);
+later(()=>$('b4').classList.add('show'),1450);
+later(()=>$('b5').classList.add('show'),1850);
+
+
+later(()=>{
+    boot.style.display='none';
+    glitchScene(scenes[0]);
+},2250);
+
+later(()=>glitchScene(scenes[1]),2850);
+later(()=>glitchScene(scenes[2]),3450);
+
+later(finish,4150);
+}
+
+skip.addEventListener('click',finish);
+restart.addEventListener('click',play);
+
+document.addEventListener('click', (e) => {
+  if (
+    !home.classList.contains('show') &&
+    e.target !== skip
+  ) {
+    finish();
+  }
+});
+
+/* Placeholder clicks for the future real sections/pages */
+document.querySelectorAll('.panel').forEach(panel=>{
+ panel.addEventListener('click',()=>{
+   const target=panel.dataset.target;
+   console.log('Budoucí proklik:',target);
+ });
+});
+
+play();
+</script>
+</body>
+</html>
